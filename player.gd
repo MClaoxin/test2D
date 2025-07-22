@@ -7,6 +7,9 @@ var screen_size # Size of the game window.
 func _ready():
 	screen_size = get_viewport_rect().size
 	hide()
+	#var sprite = $AnimatedSprite2D
+	#var shader_material = sprite.material
+	#shader_material.set_shader_parameter("enable_tint", true)
 	
 func _process(delta):
 	var velocity = Vector2.ZERO # The player's movement vector.
@@ -38,12 +41,23 @@ func _process(delta):
 
 
 func _on_body_entered(_body):
-	hide() # Player disappears after being hit.
+	var sprite = $AnimatedSprite2D
+	var shader_material = sprite.material
+	shader_material.set_shader_parameter("enable_tint", true) 
 	hit.emit()
 	# Must be deferred as we can't change physics properties on a physics callback.
 	$CollisionShape2D.set_deferred("disabled", true)
+	# 停止主角移动
+	set_process(false)
+	# 暂停整个游戏
+	get_tree().paused = true
 	
 func start(pos):
 	position = pos
+	var sprite = $AnimatedSprite2D
+	var shader_material = sprite.material
+	shader_material.set_shader_parameter("enable_tint", false) 
 	show()
 	$CollisionShape2D.disabled = false
+	set_process(true)
+	get_tree().paused = false
