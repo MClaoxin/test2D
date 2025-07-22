@@ -2,7 +2,9 @@ extends Area2D
 signal hit
 
 @export var speed = 400 # How fast the player will move (pixels/sec).
+@export var height_label : Label
 var screen_size # Size of the game window.
+var height : float = 1.0 #高度属性
 
 func _ready():
 	screen_size = get_viewport_rect().size
@@ -24,6 +26,9 @@ func _process(delta):
 
 	if velocity.length() > 0:
 		velocity = velocity.normalized() * speed
+		height += randf_range(-0.1,0.1)
+		height = clamp(height,0.0,5.0)
+		height_label.text = "高度:%.2f米" % height
 		$AnimatedSprite2D.play()
 	else:
 		$AnimatedSprite2D.stop()
@@ -57,6 +62,8 @@ func start(pos):
 	var sprite = $AnimatedSprite2D
 	var shader_material = sprite.material
 	shader_material.set_shader_parameter("enable_tint", false) 
+	height = 1.0
+	height_label.text = "高度:%.2f米" % height
 	show()
 	$CollisionShape2D.disabled = false
 	set_process(true)
